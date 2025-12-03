@@ -456,8 +456,12 @@ class CameraDataProcessor:
                 # Check if the file exists before attempting to read it
                 if os.path.exists(csv_path):
                     df = pd.read_csv(csv_path)
+                    
                     if not df.empty:
                         df_list.append(df)
+                    else:
+                        # If df is empty, keep its columns by appending an empty DataFrame with the same columns
+                        df_list.append(pd.DataFrame(columns=df.columns))
 
         if df_list:
             dfs = pd.concat(df_list, ignore_index=True).sort_values(by=['track_id', 'baseline']).reset_index(drop=True)

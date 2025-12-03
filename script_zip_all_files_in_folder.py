@@ -3,11 +3,16 @@ import zipfile
 import sys
 
 def zip_all_folders_in_path(base_path):
-    folders = [item for item in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, item))]
+    try:
+        with os.scandir(base_path) as it:
+            folders = [entry.name for entry in it if entry.is_dir(follow_symlinks=False)]
+    except FileNotFoundError:
+        print(f"Base path not found: {base_path}")
+        folders = []
     print(f"Processing base path: {base_path} ... for {len(folders)} folders")
-    
-    # for folder in folders:
-    #     print(f"- {folder}")
+    print("Folders found:")
+    for folder in folders:
+        print(f"- {folder}")
 
     for item in folders:
         folder_path = os.path.join(base_path, item)
@@ -23,18 +28,18 @@ def zip_all_folders_in_path(base_path):
 
 if __name__ == "__main__":
     paths = [
-        # "csv/新莊",
-        # "csv/新竹",
-        # "csv/西台南",
-        # "csv/鳳山",
-        # "csv/中台中",
-        # "csv/新店",
-        "output/新莊",
-        "output/新竹",
+        "csv/新莊",
+        "csv/新竹",
+        "csv/西台南",
+        "csv/鳳山",
+        "csv/中台中",
+        "csv/新店",
+        # "output/新莊",
+        # "output/新竹",
         # "output/西台南",
-        "output/鳳山",
+        # "output/鳳山",
         # "output/中台中",
-        "output/新店",
+        # "output/新店",
     ]
     for path in paths:
         zip_all_folders_in_path(path)

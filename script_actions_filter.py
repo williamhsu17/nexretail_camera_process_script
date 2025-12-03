@@ -309,14 +309,14 @@ def process_action_data(date: str, location: str) -> bool:
         return False
 
 if __name__ == "__main__":
-    date = "2025-09-02"
+    date = "2025-09-19"
 
     # location = "新莊"
     # location = "新竹"
-    location = "西台南"
+    # location = "西台南"
     # location = "鳳山"
     # location = "中台中"
-    # location = "新店"
+    location = "新店"
 
     process_action_data(date, location)
 
