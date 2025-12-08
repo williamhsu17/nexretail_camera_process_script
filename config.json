@@ -7,7 +7,8 @@
             "region_car": [4, 5, 7, 11, 12, 13, 17, 18, 21],
             "region_table": [2, 3, 6, 8, 9, 10, 14, 15, 16, 19, 20],
             "heatmap_camera": ["cam002", "cam003", "cam004", "cam005", "cam006"],
-            "heatmap_camera_id": [1, 4, 5, 6, 7]
+            "heatmap_camera_id": [1, 4, 5, 6, 7],
+            "create_gif_for_action": false
         },
         "新竹": {
             "CAMERA": ["cam001", "cam002", "cam003", "cam004", "cam006", "cam007"],
@@ -16,7 +17,8 @@
             "region_car": [24, 4, 5, 7, 11, 13, 17],
             "region_table": [2, 3, 23, 8, 9, 10, 14, 15],
             "heatmap_camera": ["cam002", "cam003", "cam004", "cam006", "cam007"],
-            "heatmap_camera_id": [9, 10, 11, 13, 14]
+            "heatmap_camera_id": [9, 10, 11, 13, 14],
+            "create_gif_for_action": false
         },
         "西台南": {
             "CAMERA": ["cam001", "cam002", "cam003", "cam004", "cam005", "cam006"],
@@ -25,7 +27,8 @@
             "region_car": [5, 24, 4, 7, 11, 25, 13, 21, 18],
             "region_table": [2, 3, 23, 8, 9, 10, 14, 15],
             "heatmap_camera": ["cam002", "cam003", "cam004", "cam005", "cam006"],
-            "heatmap_camera_id": [15, 16, 17, 18, 19, 21]
+            "heatmap_camera_id": [15, 16, 17, 18, 19, 21],
+            "create_gif_for_action": false
         },
         "鳳山": {
             "CAMERA": ["cam001", "cam002", "cam003", "cam004", "cam005", "cam006"],
@@ -34,7 +37,8 @@
             "region_car": [4, 7, 11, 25, 13, 17, 26, 27],
             "region_table": [2, 3, 23, 8, 9, 10, 14],
             "heatmap_camera": ["cam002", "cam003", "cam004", "cam005", "cam006"],
-            "heatmap_camera_id": [23, 24, 25, 28, 29]
+            "heatmap_camera_id": [23, 24, 25, 28, 29],
+            "create_gif_for_action": true
         },
         "中台中": {
             "CAMERA": ["cam001", "cam002", "cam003", "cam004", "cam005", "cam006"],
@@ -43,7 +47,8 @@
             "region_car": [28, 4, 5, 7, 13, 17, 26, 11],
             "region_table": [2, 23, 8, 9, 10, 14, 15],
             "heatmap_camera": ["cam002", "cam003", "cam005", "cam006"],
-            "heatmap_camera_id": [1, 32, 34, 35]
+            "heatmap_camera_id": [1, 32, 34, 35],
+            "create_gif_for_action": true
         },
         "新店": {
             "CAMERA": ["cam001", "cam002", "cam003", "cam004", "cam005", "cam006"],
@@ -52,7 +57,8 @@
             "region_car": [5, 4, 7, 11, 18, 29, 28, 13, 21],
             "region_table": [2, 3, 23, 8, 9, 10, 14],
             "heatmap_camera": ["cam002", "cam004", "cam005", "cam006"],
-            "heatmap_camera_id": [38, 40, 41, 42]
+            "heatmap_camera_id": [38, 40, 41, 42],
+            "create_gif_for_action": true
         },
         "桃園PIC": {
             "CAMERA": ["cam001", "cam002", "cam003", "cam004"],
@@ -61,7 +67,8 @@
             "region_car": [],
             "region_table": [30, 31, 32, 33],
             "heatmap_camera": [],
-            "heatmap_camera_id": []
+            "heatmap_camera_id": [],
+            "create_gif_for_action": false
         }
     }
 }

@@ -240,6 +240,8 @@ def process_action_data(date: str, location: str) -> bool:
             config = json.load(config_file)
 
         location_id = config["locations"][location]["LOCATION"]
+        if_create_gif = config["locations"][location].get("create_gif_for_action", False)
+        print(f"Create GIF for action: {if_create_gif}")
 
         folder_path = f"output/{location}/{date}"
         file_path = f"{folder_path}/{date}_combined_region_table.csv"
@@ -253,18 +255,20 @@ def process_action_data(date: str, location: str) -> bool:
         gif_folder = os.path.join(folder_path, "gif")
         os.makedirs(gif_folder, exist_ok=True)
 
-        for idx, row in processed_df.iterrows():
-            this_datetime = pd.to_datetime(row['datetime'])
-            this_datetime = this_datetime.strftime("%Y-%m-%dT%H_00_00")
+        if if_create_gif:
+            # 產生 GIF 連結
+            for idx, row in processed_df.iterrows():
+                this_datetime = pd.to_datetime(row['datetime'])
+                this_datetime = this_datetime.strftime("%Y-%m-%dT%H_00_00")
 
-            processed_df.loc[idx, "gif_path"] = save_gif_from_imglist(eval(row['img_path']), f"csv/{location}/{date}/{this_datetime}", f"csv/{location}/{date}/gif")
+                processed_df.loc[idx, "gif_path"] = save_gif_from_imglist(eval(row['img_path']), f"csv/{location}/{date}/{this_datetime}", f"csv/{location}/{date}/gif")
 
         processed_df.to_csv(f"{folder_path}/{date}_combined_region_table_filtered.csv", index=False)
 
         processed_df["img_path"] = ""
         # processed_df["gif_path"] = ""
         json_payload = processed_df.to_json(orient="records")
-        print(json_payload)
+        # print(json_payload)
 
         # ----- batchupload -----
         # upload(json_payload)
@@ -274,28 +278,32 @@ def process_action_data(date: str, location: str) -> bool:
         folder_path = f"output/{location}/{date}/"
 
         # 上傳單筆資料，取得資料id，並上傳對應圖片
+        row_count = 1
         for idx, row in processed_df.iterrows():
             print("")
             print("---------------------------------------------------------------")
             row_df = pd.DataFrame([row])
             row_payload = row_df.to_json(orient="records")
-            print(f"Uploading row {idx + 1}/{len(processed_df)}")
+            print(f"Uploading row {row_count}/{len(processed_df)}")
+            row_count += 1
             print(row_payload)
             action_data_id = upload(row_payload)
 
             this_datetime = pd.to_datetime(row['datetime'])
             formatted_datetime = this_datetime.strftime("%Y-%m-%dT%H_00_00")
 
-            image_upload_url = f"https://nexretail-camera-station-v2.de.r.appspot.com/data_storage/action_data_image_upload/{action_data_id}/"
-            with open(f"{base_directory}{formatted_datetime}/{row['gif_path']}", 'rb') as img_file:
-                files = {'image': (os.path.basename(f"{base_directory}{formatted_datetime}/{row['gif_path']}"), img_file, 'image/jpeg')}
-                response = requests.post(image_upload_url, files=files)
-                
-                if response.status_code == 201:
-                    print(f"Image uploaded successfully for action_data_id {action_data_id}.")
-                else:
-                    print(f"Failed to upload image for action_data_id {action_data_id}. Status code: {response.status_code}")
-                    print("Response message:", response.text)
+            if if_create_gif:
+                # 上傳 GIF 圖片
+                image_upload_url = f"https://nexretail-camera-station-v2.de.r.appspot.com/data_storage/action_data_image_upload/{action_data_id}/"
+                with open(f"{base_directory}{formatted_datetime}/{row['gif_path']}", 'rb') as img_file:
+                    files = {'image': (os.path.basename(f"{base_directory}{formatted_datetime}/{row['gif_path']}"), img_file, 'image/jpeg')}
+                    response = requests.post(image_upload_url, files=files)
+                    
+                    if response.status_code == 201:
+                        print(f"Image uploaded successfully for action_data_id {action_data_id}.")
+                    else:
+                        print(f"Failed to upload image for action_data_id {action_data_id}. Status code: {response.status_code}")
+                        print("Response message:", response.text)
 
         print("")
         print("---------------------------------------------------------------")
@@ -309,14 +317,14 @@ def process_action_data(date: str, location: str) -> bool:
         return False
 
 if __name__ == "__main__":
-    date = "2025-09-19"
+    date = "2025-12-03"
 
     # location = "新莊"
     # location = "新竹"
-    # location = "西台南"
+    location = "西台南"
     # location = "鳳山"
     # location = "中台中"
-    location = "新店"
+    # location = "新店"
 
     process_action_data(date, location)
 
