@@ -60,10 +60,9 @@ def upload(json_payload, url="https://nexretail-camera-station-v2.de.r.appspot.c
         print(f"\nFailed to upload data. Status code: {response.status_code}")
         print("Response message:", response.json().get("message", "No message in response"))
 
-def process_car_plate_data(date: str, location: str) -> bool:
+def process_car_plate_data(date: str, location: str, config_path: str = "config.json") -> bool:
     try:
         # Load configuration from a JSON file
-        config_path = "config.json"
         
         with open(config_path, "r") as config_file:
             config = json.load(config_file)

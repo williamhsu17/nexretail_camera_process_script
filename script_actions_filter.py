@@ -198,6 +198,7 @@ def save_gif_from_imglist(imgs_list, save_dir, target_dir):
     
     (Path(save_dir)/gif_dir).mkdir(parents=True, exist_ok=True)
     save_path = gif_dir / save_path.name
+    # save_path = Path(target_dir) / save_path.name
     # 儲存成 GIF
 
     # 降低顏色數
@@ -215,7 +216,7 @@ def save_gif_from_imglist(imgs_list, save_dir, target_dir):
         loop=0,
         optimize=True
     )
-    return str(save_path)
+    return os.path.join(save_dir, str(save_path))#str(save_path)
 
 def upload(json_payload, url="https://nexretail-camera-station-v2.de.r.appspot.com/data_storage/action_data_upload/"):
     print("uploading action data...")
@@ -231,10 +232,9 @@ def upload(json_payload, url="https://nexretail-camera-station-v2.de.r.appspot.c
         print(f"\nFailed to upload data. Status code: {response.status_code}")
         print("Response message:", response.json().get("message", "No message in response"))
 
-def process_action_data(date: str, location: str) -> bool:
+def process_action_data(date: str, location: str, output_path = "", config_path: str = "config.json") -> bool:
     try:
         # Load configuration from a JSON file
-        config_path = "config.json"
 
         with open(config_path, "r") as config_file:
             config = json.load(config_file)
@@ -260,8 +260,13 @@ def process_action_data(date: str, location: str) -> bool:
             for idx, row in processed_df.iterrows():
                 this_datetime = pd.to_datetime(row['datetime'])
                 this_datetime = this_datetime.strftime("%Y-%m-%dT%H_00_00")
-
-                processed_df.loc[idx, "gif_path"] = save_gif_from_imglist(eval(row['img_path']), f"csv/{location}/{date}/{this_datetime}", f"csv/{location}/{date}/gif")
+                if output_path:
+                    save_dir = f"{output_path}/{this_datetime}"
+                    target_dir = gif_folder
+                else:
+                    save_dir = f"csv/{location}/{date}/{this_datetime}"
+                    target_dir =  f"csv/{location}/{date}/gif"
+                processed_df.loc[idx, "gif_path"] = save_gif_from_imglist(eval(row['img_path']), save_dir, target_dir)
 
         processed_df.to_csv(f"{folder_path}/{date}_combined_region_table_filtered.csv", index=False)
 
@@ -295,7 +300,8 @@ def process_action_data(date: str, location: str) -> bool:
             if if_create_gif:
                 # 上傳 GIF 圖片
                 image_upload_url = f"https://nexretail-camera-station-v2.de.r.appspot.com/data_storage/action_data_image_upload/{action_data_id}/"
-                with open(f"{base_directory}{formatted_datetime}/{row['gif_path']}", 'rb') as img_file:
+                # with open(f"{base_directory}{formatted_datetime}/{row['gif_path']}", 'rb') as img_file:
+                with open(f"{save_dir}/{row['gif_path']}", 'rb') as img_file:
                     files = {'image': (os.path.basename(f"{base_directory}{formatted_datetime}/{row['gif_path']}"), img_file, 'image/jpeg')}
                     response = requests.post(image_upload_url, files=files)
                     
