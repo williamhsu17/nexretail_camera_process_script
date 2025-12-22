@@ -87,7 +87,17 @@ def process_camera_heatmap_data(date: str, location: str) -> bool:
         CAMERA = config["locations"][location]["heatmap_camera"]
         CAMERA_ID = config["locations"][location]["heatmap_camera_id"]
 
-        MASK_PATH = f"mask_{location}"
+        # Check if the mask file exists, and set MASK_PATH accordingly
+        mask_file_path = f"csv/{location}/{date}/{date}T09_00_00/labels/solutions_masks.npy"
+        if os.path.exists(mask_file_path):
+            MASK_PATH = f"{location}/{date}/{date}T09_00_00/labels"
+            print(f"daily mask path found: {MASK_PATH}")
+        else:
+            MASK_PATH = f"mask_{location}"
+            print(f"using default mask path: {MASK_PATH}.")
+
+        # MASK_PATH = f"mask_{location}"
+        # print(f"Using mask path: {MASK_PATH}")
 
         print("Processing data...")
 
@@ -291,20 +301,20 @@ def process_camera_heatmap_data(date: str, location: str) -> bool:
                     image_path = "csv/mask_中台中/raw_cam006.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
             
-            elif MASK_PATH == "mask_新店":
+            elif location == "新店":
                 # 新竹
                 if camera == "cam002":
                     xy_values_1 = data['cam002']['cam002_bZ4x']
                     xy_values_2 = data['cam002']['cam002_YARIS_CROSS']
                     xy_values = np.vstack((xy_values_1, xy_values_2))
-                    image_path = "csv/mask_新店/raw_cam002.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam002.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam004":
                     xy_values_1 = data['cam004']['cam004_VIOS']
                     xy_values_2 = data['cam004']['cam004_RAV4']
                     xy_values = np.vstack((xy_values_1, xy_values_2))
-                    image_path = "csv/mask_新店/raw_cam004.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam004.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam005":
@@ -313,13 +323,13 @@ def process_camera_heatmap_data(date: str, location: str) -> bool:
                     xy_values_3 = data['cam005']['cam005_COROLLA_SPORT']
                     xy_values_4 = data['cam005']['cam005_ALTIS2']
                     xy_values = np.vstack((xy_values_1, xy_values_2, xy_values_3, xy_values_4))
-                    image_path = "csv/mask_新店/raw_cam005.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam005.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam006":
                     xy_values_1 = data['cam006']['cam006_SIENTA']
                     xy_values = np.vstack((xy_values_1))
-                    image_path = "csv/mask_新店/raw_cam006.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam006.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
             df_region = pd.DataFrame(xy_values, columns=['x', 'y'])
@@ -353,13 +363,13 @@ def process_camera_heatmap_data(date: str, location: str) -> bool:
         return False
 
 if __name__ == "__main__":
-    date = "2025-06-29"
+    date = "2025-12-14"
         
     # location = "新莊"
     # location = "新竹"
     # location = "西台南"
-    location = "鳳山"
-    # location = "中台中"
+    # location = "鳳山"
+    location = "中台中"
     # location = "新店"
 
     process_camera_heatmap_data(date, location)

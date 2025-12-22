@@ -53,13 +53,13 @@ def main_process(location, date_stamp):
 
 if __name__ == "__main__":
 
-    date_stamp = "2025-12-05"
+    date_stamp = "2025-12-20"
 
     locations = [
-        "新莊",
+        # "新莊",
         "新竹",
-        "西台南",
-        "鳳山",
+        # "西台南",
+        # "鳳山",
         "中台中",
         "新店",
         # "桃園PIC",
