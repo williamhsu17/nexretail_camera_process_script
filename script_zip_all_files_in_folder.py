@@ -29,17 +29,17 @@ def zip_all_folders_in_path(base_path):
 if __name__ == "__main__":
     paths = [
         "csv/新莊",
+        "output/新莊",
         "csv/新竹",
+        "output/新竹",
         "csv/西台南",
-        "csv/鳳山",
-        "csv/中台中",
-        "csv/新店",
-        # "output/新莊",
-        # "output/新竹",
-        # "output/西台南",
+        "output/西台南",
+        # "csv/鳳山",
         # "output/鳳山",
+        # "csv/中台中",
         # "output/中台中",
-        # "output/新店",
+        "csv/新店",
+        "output/新店",
     ]
     for path in paths:
         zip_all_folders_in_path(path)

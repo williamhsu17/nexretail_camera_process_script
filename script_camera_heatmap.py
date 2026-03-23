@@ -34,9 +34,6 @@ def upload_image(file_path, camera, date):
     else:
         print(f"Failed to upload {file_path}. Error: {response.text}")
 
-    print("----------\n")
-
-
 def plot_heatmap(x, y, camera, date, location, cam_image, age='all', gender='all', sigma=16, vmin=0, vmax=3, alpha=0.6):
     cmap = plt.get_cmap('jet')
     cmap.set_under(color=(1, 1, 1, 0))
@@ -87,6 +84,12 @@ def process_camera_heatmap_data(date: str, location: str) -> bool:
         CAMERA = config["locations"][location]["heatmap_camera"]
         CAMERA_ID = config["locations"][location]["heatmap_camera_id"]
 
+
+        print(f"--------------------Start Creating Camera {location}({location_id}) Heatmap { date } --------------------")
+        
+        print("CAMERA: ", CAMERA)
+        print("CAMERA_ID: ", CAMERA_ID)
+
         # Check if the mask file exists, and set MASK_PATH accordingly
         mask_file_path = f"csv/{location}/{date}/{date}T09_00_00/labels/solutions_masks.npy"
         if os.path.exists(mask_file_path):
@@ -125,184 +128,208 @@ def process_camera_heatmap_data(date: str, location: str) -> bool:
         # ====================================================================================================
         file_path = f'csv/{MASK_PATH}/solutions_masks.npy'
         data = np.load(file_path, allow_pickle=True).item()
+        def _print_data_structure(d, indent=0):
+            for k, v in d.items():
+                prefix = "  " * indent
+                if isinstance(v, dict):
+                    print(f"{prefix}{k}/")
+                    _print_data_structure(v, indent + 1)
+                elif isinstance(v, np.ndarray):
+                    print(f"{prefix}{k}: ndarray shape={v.shape}, dtype={v.dtype}")
+                else:
+                    print(f"{prefix}{k}: {type(v).__name__}")
+
+        print("solutions_masks.npy structure:")
+        _print_data_structure(data)
         # print(data)
 
         print("mask_path: ", MASK_PATH)
+        print("")
 
         for camera in CAMERA:
-            print(f"creating heatmap for cam_2 on {date}.....")
+            print(f"creating heatmap for {camera} on {date}.....")
 
-            if MASK_PATH == "mask_新莊":
+            if location_id == 1:
+                print("location_id 1 found, using 新莊 mask settings.")
                 if camera == "cam002":
-                    xy_values_1 = data['cam_2']['cam_2_YARIS_CROSS']
+                    xy_values_1 = data['cam002']['cam002_YARIS_CROSS']
                     xy_values = np.vstack((xy_values_1))
-                    image_path = "csv/mask_新莊/raw_cam_2.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam002.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
-                elif camera == "cam003":
-                    xy_values_1 = data['cam_3']['cam_3_bZ4x']
-                    xy_values_2 = data['cam_3']['cam_3_RAV4']
-                    xy_values = np.vstack((xy_values_1, xy_values_2))
-                    image_path = "csv/mask_新莊/raw_cam_3.jpg"
-                    cam_image = Image.open(image_path).convert("RGB")
+                # elif camera == "cam003":
+                #     xy_values_1 = data['cam003']['cam003_bZ4x']
+                #     xy_values_2 = data['cam003']['cam003_RAV4']
+                #     xy_values = np.vstack((xy_values_1, xy_values_2))
+                #     image_path = "csv/mask_新莊/raw_cam_3.jpg"
+                #     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam004":
-                    xy_values_1 = data['cam_4']['cam_4_VIOS']
+                    xy_values_1 = data['cam004']['cam004_VIOS']
                     xy_values = np.vstack((xy_values_1))
-                    image_path = "csv/mask_新莊/raw_cam_4.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam004.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam005":
-                    xy_values_1 = data['cam_5']['cam_5_car_None']
-                    xy_values_2 = data['cam_5']['cam_5_SIENTA']
-                    xy_values_3 = data['cam_5']['cam_5_COROLLA_SPORT']
+                    xy_values_1 = data['cam005']['cam005_car_None']
+                    xy_values_2 = data['cam005']['cam005_SIENTA']
+                    xy_values_3 = data['cam005']['cam005_COROLLA_SPORT']
                     xy_values = np.vstack((xy_values_1, xy_values_2, xy_values_3))
-                    image_path = "csv/mask_新莊/raw_cam_5.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam005.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam006":
-                    xy_values_1 = data['cam_6']['cam_6_ALTIS']
-                    xy_values_2 = data['cam_6']['cam_6_SIENTA']
+                    xy_values_1 = data['cam006']['cam006_ALTIS']
+                    xy_values_2 = data['cam006']['cam006_SIENTA']
                     xy_values = np.vstack((xy_values_1, xy_values_2))
-                    image_path = "csv/mask_新莊/raw_cam_6.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam006.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
             
-            elif MASK_PATH == "mask_新竹":
+            # elif MASK_PATH == "mask_新竹":
+            elif location_id == 2:
+                print("location_id 2 found, using 新竹 mask settings.")
                 # 新竹
                 if camera == "cam002":
-                    xy_values_1 = data['cam_2']['cam_2_car_white']
-                    xy_values_2 = data['cam_2']['cam_2_YARIS_CROSS']
+                    xy_values_1 = data['cam002']['cam002_car_white']
+                    xy_values_2 = data['cam002']['cam002_YARIS_CROSS']
                     xy_values = np.vstack((xy_values_1, xy_values_2))
-                    image_path = "csv/mask_新竹/raw_cam_2.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam002.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam003":
-                    xy_values_1 = data['cam_3']['cam_3_bZ4x']
-                    xy_values_2 = data['cam_3']['cam_3_RAV4']
+                    xy_values_1 = data['cam003']['cam003_bZ4x']
+                    xy_values_2 = data['cam003']['cam003_RAV4']
                     xy_values = np.vstack((xy_values_1, xy_values_2))
-                    image_path = "csv/mask_新竹/raw_cam_3.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam003.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam004":
-                    xy_values_1 = data['cam_4']['cam_4_VIOS']
+                    xy_values_1 = data['cam004']['cam004_VIOS']
                     xy_values = np.vstack((xy_values_1))
-                    image_path = "csv/mask_新竹/raw_cam_4.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam004.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam006":
-                    xy_values_1 = data['cam_5']['cam_5_SIENTA']
-                    xy_values_2 = data['cam_5']['cam_5_COROLLA_SPORT']
+                    xy_values_1 = data['cam006']['cam006_SIENTA']
+                    xy_values_2 = data['cam006']['cam006_COROLLA_SPORT']
                     xy_values = np.vstack((xy_values_1, xy_values_2))
-                    image_path = "csv/mask_新竹/raw_cam_5.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam006.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam007":
-                    xy_values_1 = data['cam_6']['cam_6_SIENTA']
+                    xy_values_1 = data['cam007']['cam007_SIENTA']
                     xy_values = np.vstack((xy_values_1))
-                    image_path = "csv/mask_新竹/raw_cam_6.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam007.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
             
-            elif MASK_PATH == "mask_西台南":
+            elif location_id == 3:
+                print("location_id 3 found, using 西台南 mask settings.")
                 # 西台南
                 if camera == "cam002":
                     xy_values_1 = data['cam002']['cam002_YARIS_CROSS']
                     xy_values_2 = data['cam002']['cam002_bZ4x']
                     xy_values = np.vstack((xy_values_1, xy_values_2))
-                    image_path = "csv/mask_西台南/raw_cam002.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam002.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam003":
                     xy_values_1 = data['cam003']['cam003_RAV4']
                     xy_values = np.vstack((xy_values_1))
-                    image_path = "csv/mask_西台南/raw_cam003.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam003.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam004":
                     xy_values_1 = data['cam004']['cam004_VIOS']
                     xy_values_2 = data['cam004']['cam004_VIOS2']
                     xy_values = np.vstack((xy_values_1, xy_values_2))
-                    image_path = "csv/mask_西台南/raw_cam004.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam004.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam005":
                     xy_values_1 = data['cam005']['cam005_SIENTA']
                     xy_values_2 = data['cam005']['cam005_COROLLA_SPORT']
                     xy_values = np.vstack((xy_values_1, xy_values_2))
-                    image_path = "csv/mask_西台南/raw_cam005.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam005.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam006":
                     xy_values_1 = data['cam006']['cam006_SIENTA']
                     xy_values_2 = data['cam006']['cam006_ALTIS']
                     xy_values = np.vstack((xy_values_1, xy_values_2))
-                    image_path = "csv/mask_西台南/raw_cam006.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam006.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
             
-            elif MASK_PATH == "mask_鳳山":
+            # elif MASK_PATH == "mask_鳳山":
+            elif location_id == 4:
+                print("location_id 4 found, using 鳳山 mask settings.")
                 if camera == "cam002":
                     xy_values_1 = data['cam002']['cam002_YARIS_CROSS']
                     xy_values = np.vstack((xy_values_1))
-                    image_path = "csv/mask_鳳山/raw_cam002.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam002.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam003":
                     xy_values_1 = data['cam003']['cam003_RAV4']
                     xy_values = np.vstack((xy_values_1))
-                    image_path = "csv/mask_鳳山/raw_cam003.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam003.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam004":
                     xy_values_1 = data['cam004']['cam004_VIOS']
                     xy_values_2 = data['cam004']['cam004_VIOS2']
                     xy_values = np.vstack((xy_values_1, xy_values_2))
-                    image_path = "csv/mask_鳳山/raw_cam004.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam004.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam005":
                     xy_values_1 = data['cam005']['cam005_COROLLA_SPORT']
                     xy_values_2 = data['cam005']['cam005_SIENTA']
                     xy_values = np.vstack((xy_values_1, xy_values_2))
-                    image_path = "csv/mask_鳳山/raw_cam005.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam005.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam006":
                     xy_values_1 = data['cam006']['cam006_SIENTA2']
                     xy_values_2 = data['cam006']['cam006_SIENTA3']
                     xy_values = np.vstack((xy_values_1, xy_values_2))
-                    image_path = "csv/mask_鳳山/raw_cam006.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam006.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
             
-            elif MASK_PATH == "mask_中台中":
+            # elif MASK_PATH == "mask_中台中":
+            elif location_id == 5:
+                print("location_id 5 found, using 中台中 mask settings.")
                 if camera == "cam002":
                     xy_values_1 = data['cam002']['cam002_YARIS_CROSS']
                     xy_values_2 = data['cam002']['cam002_COROLLA_CROSS']
                     xy_values = np.vstack((xy_values_1, xy_values_2))
-                    image_path = "csv/mask_中台中/raw_cam002.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam002.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam003":
                     xy_values_1 = data['cam003']['cam003_RAV4']
                     xy_values_2 = data['cam003']['cam003_bZ4x']
                     xy_values = np.vstack((xy_values_1, xy_values_2))
-                    image_path = "csv/mask_中台中/raw_cam003.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam003.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam005":
                     xy_values_1 = data['cam005']['cam005_COROLLA_SPORT']
                     xy_values_2 = data['cam005']['cam005_SIENTA']
                     xy_values = np.vstack((xy_values_1, xy_values_2))
-                    image_path = "csv/mask_中台中/raw_cam005.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam005.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
 
                 elif camera == "cam006":
                     xy_values_1 = data['cam006']['cam006_SIENTA2']
                     xy_values_2 = data['cam006']['cam006_VIOS']
                     xy_values = np.vstack((xy_values_1, xy_values_2))
-                    image_path = "csv/mask_中台中/raw_cam006.jpg"
+                    image_path = f"csv/{MASK_PATH}/raw_cam006.jpg"
                     cam_image = Image.open(image_path).convert("RGB")
             
-            elif location == "新店":
-                # 新竹
+            # elif location == "新店":
+            elif location_id == 6:
+                print("location_id 6 found, using 新店 mask settings.")
+                # 新店
                 if camera == "cam002":
                     xy_values_1 = data['cam002']['cam002_bZ4x']
                     xy_values_2 = data['cam002']['cam002_YARIS_CROSS']
@@ -348,13 +375,16 @@ def process_camera_heatmap_data(date: str, location: str) -> bool:
             x = df_base_text_combined['cx']
             y = df_base_text_combined['cy']
 
+            print("camera: ", camera)
+
             image_path = plot_heatmap(x, y, camera, date, location, cam_image)
 
             camera_id = CAMERA_ID[CAMERA.index(camera)]
             upload_image(image_path, camera_id, date)
+            print("----------\n")
         
+        print(f"--------------------End   Creating Camera {location}({location_id}) Heatmap { date } --------------------")
         print("")
-        print(f"--------------------End Creating Camera Heatmap { date } --------------------")
 
         return True
         
@@ -363,276 +393,50 @@ def process_camera_heatmap_data(date: str, location: str) -> bool:
         return False
 
 if __name__ == "__main__":
-    date = "2025-12-14"
-        
-    # location = "新莊"
-    # location = "新竹"
-    # location = "西台南"
-    # location = "鳳山"
-    location = "中台中"
-    # location = "新店"
+    date_stamps = [
+        "2026-01-01",
+        "2026-01-02",
+        "2026-01-03",
+        "2026-01-04",
+        "2026-01-05",
+        "2026-01-06",
+        "2026-01-07",
+        # "2026-01-08",
+        # "2026-01-09",
+        # "2026-01-10",
+        # "2026-01-11",
+        # "2026-01-12",
+        # "2026-01-13",
+        # "2026-01-14",
+        # "2026-01-15",
+        # "2026-01-16",
+        # "2026-01-17",
+        # "2026-01-18",
+        # "2026-01-19",
+        # "2026-01-20",
+        # "2026-01-21",
+        # "2026-01-22",
+        # "2026-01-23",
+        # "2026-01-24",
+        # "2026-01-25",
+        # "2026-01-26",
+        # "2026-01-27",
+        # "2026-01-28",
+        # "2026-01-29",
+        # "2026-01-30",
+        # "2026-01-31",
+    ]
 
-    process_camera_heatmap_data(date, location)
+    locations = [
+        # "新莊",
+        # "新竹",
+        # "西台南",
+        "鳳山",
+        # "中台中",
+        # "新店",
+        # "桃園PIC",
+    ]
 
-    # # Load configuration from a JSON file
-    # config_path = "config.json"
-
-    # with open(config_path, "r") as config_file:
-    #     config = json.load(config_file)
-
-    # location_id = config["locations"][location]["LOCATION"]
-    # CAMERA = config["locations"][location]["heatmap_camera"]
-    # CAMERA_ID = config["locations"][location]["heatmap_camera_id"]
-
-    # MASK_PATH = f"mask_{location}"
-
-    # print("Processing data...")
-
-    # dx_base_text = {}
-    # dx_entrance = {}
-
-    # print(f"processing data for {date}...")
-    # data_path = f"output/{location}/{date}"
-
-    # data_base_path = f"{data_path}/{date}_combined_base_text.csv"
-    # data_entrance_path = f"{data_path}/{date}_combined_entrance.csv"
-
-    # df_base_text = pd.read_csv(data_base_path)
-    # df_entrance = pd.read_csv(data_entrance_path)
-
-    # df_base_text = df_base_text[df_base_text['id'].isin(df_entrance['track_id'])]
-
-    # df_base_text['cx'] = (df_base_text['x1'] + df_base_text['x2']) / 2
-    # # df_base_text['cx'] = df_base_text['x1']
-    # df_base_text['cy'] = df_base_text['y2']
-
-    # dx_base_text[date] = df_base_text
-    # dx_entrance[date] = df_entrance
-
-    # # ====================================================================================================
-    # file_path = f'csv/{MASK_PATH}/solutions_masks.npy'
-    # data = np.load(file_path, allow_pickle=True).item()
-    # # print(data)
-
-    # print("mask_path: ", MASK_PATH)
-
-    # for camera in CAMERA:
-    #     print(f"creating heatmap for cam_2 on {date}.....")
-
-    #     if MASK_PATH == "mask_新莊":
-    #         if camera == "cam002":
-    #             xy_values_1 = data['cam_2']['cam_2_YARIS_CROSS']
-    #             xy_values = np.vstack((xy_values_1))
-    #             image_path = "csv/mask_新莊/raw_cam_2.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam003":
-    #             xy_values_1 = data['cam_3']['cam_3_bZ4x']
-    #             xy_values_2 = data['cam_3']['cam_3_RAV4']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2))
-    #             image_path = "csv/mask_新莊/raw_cam_3.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam004":
-    #             xy_values_1 = data['cam_4']['cam_4_VIOS']
-    #             xy_values = np.vstack((xy_values_1))
-    #             image_path = "csv/mask_新莊/raw_cam_4.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam005":
-    #             xy_values_1 = data['cam_5']['cam_5_car_None']
-    #             xy_values_2 = data['cam_5']['cam_5_SIENTA']
-    #             xy_values_3 = data['cam_5']['cam_5_COROLLA_SPORT']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2, xy_values_3))
-    #             image_path = "csv/mask_新莊/raw_cam_5.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam006":
-    #             xy_values_1 = data['cam_6']['cam_6_ALTIS']
-    #             xy_values_2 = data['cam_6']['cam_6_SIENTA']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2))
-    #             image_path = "csv/mask_新莊/raw_cam_6.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-        
-    #     elif MASK_PATH == "mask_新竹":
-    #         # 新竹
-    #         if camera == "cam002":
-    #             xy_values_1 = data['cam_2']['cam_2_car_white']
-    #             xy_values_2 = data['cam_2']['cam_2_YARIS_CROSS']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2))
-    #             image_path = "csv/mask_新竹/raw_cam_2.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam003":
-    #             xy_values_1 = data['cam_3']['cam_3_bZ4x']
-    #             xy_values_2 = data['cam_3']['cam_3_RAV4']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2))
-    #             image_path = "csv/mask_新竹/raw_cam_3.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam004":
-    #             xy_values_1 = data['cam_4']['cam_4_VIOS']
-    #             xy_values = np.vstack((xy_values_1))
-    #             image_path = "csv/mask_新竹/raw_cam_4.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam006":
-    #             xy_values_1 = data['cam_5']['cam_5_SIENTA']
-    #             xy_values_2 = data['cam_5']['cam_5_COROLLA_SPORT']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2))
-    #             image_path = "csv/mask_新竹/raw_cam_5.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam007":
-    #             xy_values_1 = data['cam_6']['cam_6_SIENTA']
-    #             xy_values = np.vstack((xy_values_1))
-    #             image_path = "csv/mask_新竹/raw_cam_6.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-        
-    #     elif MASK_PATH == "mask_西台南":
-    #         # 西台南
-    #         if camera == "cam002":
-    #             xy_values_1 = data['cam002']['cam002_YARIS_CROSS']
-    #             xy_values_2 = data['cam002']['cam002_bZ4x']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2))
-    #             image_path = "csv/mask_西台南/raw_cam002.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam003":
-    #             xy_values_1 = data['cam003']['cam003_RAV4']
-    #             xy_values = np.vstack((xy_values_1))
-    #             image_path = "csv/mask_西台南/raw_cam003.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam004":
-    #             xy_values_1 = data['cam004']['cam004_VIOS']
-    #             xy_values_2 = data['cam004']['cam004_VIOS2']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2))
-    #             image_path = "csv/mask_西台南/raw_cam004.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam005":
-    #             xy_values_1 = data['cam005']['cam005_SIENTA']
-    #             xy_values_2 = data['cam005']['cam005_COROLLA_SPORT']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2))
-    #             image_path = "csv/mask_西台南/raw_cam005.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam006":
-    #             xy_values_1 = data['cam006']['cam006_SIENTA']
-    #             xy_values_2 = data['cam006']['cam006_ALTIS']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2))
-    #             image_path = "csv/mask_西台南/raw_cam006.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-        
-    #     elif MASK_PATH == "mask_鳳山":
-    #         if camera == "cam002":
-    #             xy_values_1 = data['cam002']['cam002_YARIS_CROSS']
-    #             xy_values = np.vstack((xy_values_1))
-    #             image_path = "csv/mask_鳳山/raw_cam002.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam003":
-    #             xy_values_1 = data['cam003']['cam003_RAV4']
-    #             xy_values = np.vstack((xy_values_1))
-    #             image_path = "csv/mask_鳳山/raw_cam003.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam004":
-    #             xy_values_1 = data['cam004']['cam004_VIOS']
-    #             xy_values_2 = data['cam004']['cam004_VIOS2']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2))
-    #             image_path = "csv/mask_鳳山/raw_cam004.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam005":
-    #             xy_values_1 = data['cam005']['cam005_COROLLA_SPORT']
-    #             xy_values_2 = data['cam005']['cam005_SIENTA']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2))
-    #             image_path = "csv/mask_鳳山/raw_cam005.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam006":
-    #             xy_values_1 = data['cam006']['cam006_SIENTA2']
-    #             xy_values_2 = data['cam006']['cam006_SIENTA3']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2))
-    #             image_path = "csv/mask_鳳山/raw_cam006.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-        
-    #     elif MASK_PATH == "mask_中台中":
-    #         if camera == "cam002":
-    #             xy_values_1 = data['cam002']['cam002_YARIS_CROSS']
-    #             xy_values_2 = data['cam002']['cam002_COROLLA_CROSS']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2))
-    #             image_path = "csv/mask_中台中/raw_cam002.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam003":
-    #             xy_values_1 = data['cam003']['cam003_RAV4']
-    #             xy_values_2 = data['cam003']['cam003_bZ4x']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2))
-    #             image_path = "csv/mask_中台中/raw_cam003.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam005":
-    #             xy_values_1 = data['cam005']['cam005_COROLLA_SPORT']
-    #             xy_values_2 = data['cam005']['cam005_SIENTA']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2))
-    #             image_path = "csv/mask_中台中/raw_cam005.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam006":
-    #             xy_values_1 = data['cam006']['cam006_SIENTA2']
-    #             xy_values_2 = data['cam006']['cam006_VIOS']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2))
-    #             image_path = "csv/mask_中台中/raw_cam006.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-        
-    #     elif MASK_PATH == "mask_新店":
-    #         # 新竹
-    #         if camera == "cam002":
-    #             xy_values_1 = data['cam002']['cam002_bZ4x']
-    #             xy_values_2 = data['cam002']['cam002_YARIS_CROSS']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2))
-    #             image_path = "csv/mask_新店/raw_cam002.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam004":
-    #             xy_values_1 = data['cam004']['cam004_VIOS']
-    #             xy_values_2 = data['cam004']['cam004_RAV4']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2))
-    #             image_path = "csv/mask_新店/raw_cam004.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam005":
-    #             xy_values_1 = data['cam005']['cam005_ALTIS']
-    #             xy_values_2 = data['cam005']['cam005_COROLLA_CROSS']
-    #             xy_values_3 = data['cam005']['cam005_COROLLA_SPORT']
-    #             xy_values_4 = data['cam005']['cam005_ALTIS2']
-    #             xy_values = np.vstack((xy_values_1, xy_values_2, xy_values_3, xy_values_4))
-    #             image_path = "csv/mask_新店/raw_cam005.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #         elif camera == "cam006":
-    #             xy_values_1 = data['cam006']['cam006_SIENTA']
-    #             xy_values = np.vstack((xy_values_1))
-    #             image_path = "csv/mask_新店/raw_cam006.jpg"
-    #             cam_image = Image.open(image_path).convert("RGB")
-
-    #     df_region = pd.DataFrame(xy_values, columns=['x', 'y'])
-
-    #     dx_base_text_this_camera = {
-    #         date: dx_base_text[date][dx_base_text[date]['camera'] == camera]
-    #         for date in dx_base_text
-    #     }
-
-    #     df_base_text_combined = pd.concat(dx_base_text_this_camera.values(), ignore_index=True)
-
-    #     df_base_text_combined = df_base_text_combined[
-    #         df_base_text_combined[['cx', 'cy']].apply(tuple, axis=1).isin(df_region[['x', 'y']].apply(tuple, axis=1))
-    #     ]
-
-    #     x = df_base_text_combined['cx']
-    #     y = df_base_text_combined['cy']
-
-    #     plot_heatmap(x, y, camera, date, cam_image)
+    for date_stamp in date_stamps:
+        for location in locations:
+            process_camera_heatmap_data(date_stamp, location)

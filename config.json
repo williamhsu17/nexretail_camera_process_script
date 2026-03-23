@@ -6,8 +6,8 @@
             "entrance": [1],
             "region_car": [4, 5, 7, 11, 12, 13, 17, 18, 21],
             "region_table": [2, 3, 6, 8, 9, 10, 14, 15, 16, 19, 20],
-            "heatmap_camera": ["cam002", "cam003", "cam004", "cam005", "cam006"],
-            "heatmap_camera_id": [1, 4, 5, 6, 7],
+            "heatmap_camera": ["cam002", "cam004", "cam005", "cam006"],
+            "heatmap_camera_id": [1, 5, 6, 7],
             "create_gif_for_action": false
         },
         "新竹": {
@@ -27,7 +27,7 @@
             "region_car": [5, 24, 4, 7, 11, 25, 13, 21, 18],
             "region_table": [2, 3, 23, 8, 9, 10, 14, 15],
             "heatmap_camera": ["cam002", "cam003", "cam004", "cam005", "cam006"],
-            "heatmap_camera_id": [15, 16, 17, 18, 19, 21],
+            "heatmap_camera_id": [16, 17, 18, 19, 21],
             "create_gif_for_action": false
         },
         "鳳山": {

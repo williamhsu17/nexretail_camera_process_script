@@ -53,17 +53,39 @@ def main_process(location, date_stamp):
 
 if __name__ == "__main__":
 
-    date_stamp = "2025-12-20"
+    date_stamps = [
+        # "2026-02-28",
+        # "2026-03-01",
+        # "2026-03-02",
+        # "2026-03-03",
+        # "2026-03-04",
+        # "2026-03-05",
+        # "2026-03-06",
+        # "2026-03-07",
+        # "2026-03-08",
+        # "2026-03-09",
+        # "2026-03-10",
+        # "2026-03-11",
+        # "2026-03-12",
+        # "2026-03-13",
+        # "2026-03-14",
+        # "2026-03-15",
+        # "2026-03-16",
+        "2026-03-17",
+        "2026-03-18",
+        "2026-03-19",
+    ]
 
     locations = [
         # "新莊",
-        "新竹",
+        # "新竹",
         # "西台南",
         # "鳳山",
-        "中台中",
+        # "中台中",
         "新店",
         # "桃園PIC",
     ]
-    
-    for location in locations:
-        main_process(location, date_stamp)
+
+    for date_stamp in date_stamps:
+        for location in locations:
+            main_process(location, date_stamp)
