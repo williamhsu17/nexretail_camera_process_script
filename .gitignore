@@ -3,9 +3,7 @@ __pycache__/
 *.pyc
 .venv/
 
-externals/
 output/
 csv/
 video/
-PIC/
 car_plate/
