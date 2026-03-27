@@ -10,7 +10,7 @@ from script_car_plate_processor import process_car_plate_data
 from script_camera_heatmap import process_camera_heatmap_data
 
 # @resource_monitor
-def main_process(location, date_stamp):
+def main_process(location, date_stamp, config_path="config.json"):
 
     print(f"Processing data for location: {location}, date: {date_stamp}")
 
@@ -18,7 +18,7 @@ def main_process(location, date_stamp):
     inference_end_time = 20
     
     # Load configuration from a JSON file
-    config_path = "config.json"
+    # config_path = "config.json"
     
     with open(config_path, "r") as config_file:
         config = json.load(config_file)
@@ -29,7 +29,8 @@ def main_process(location, date_stamp):
     region_car = config["locations"][location]["region_car"]
     region_table = config["locations"][location]["region_table"]
 
-    inference_path = f"csv/{location}/{date_stamp}/"
+    # inference_path = f"csv/{location}/{date_stamp}/"
+    inference_path = f"toyota/"
     output_path = f"output/{location}/"
 
     processor = CameraDataProcessor(
@@ -46,10 +47,10 @@ def main_process(location, date_stamp):
     )
     processor.output_process()
 
-    process_action_data(date_stamp, location)
-    process_region_data(date_stamp, location)
-    process_car_plate_data(date_stamp, location)
-    process_camera_heatmap_data(date_stamp, location)
+    process_action_data(date_stamp, location, inference_path,config_path)
+    process_region_data(date_stamp, location, config_path)
+    process_car_plate_data(date_stamp, location, config_path)
+    process_camera_heatmap_data(date_stamp, location, config_path)
 
 if __name__ == "__main__":
 

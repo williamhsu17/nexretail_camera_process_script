@@ -72,10 +72,9 @@ def plot_heatmap(x, y, camera, date, location, cam_image, age='all', gender='all
 
     return output_file_path
 
-def process_camera_heatmap_data(date: str, location: str) -> bool:
+def process_camera_heatmap_data(date: str, location: str, config_path: str = "config.json") -> bool:
     try:
         # Load configuration from a JSON file
-        config_path = "config.json"
 
         with open(config_path, "r") as config_file:
             config = json.load(config_file)
